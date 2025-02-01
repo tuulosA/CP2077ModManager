@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-echo Building AllusModManager Executable...
+echo Building CP2077 Mod Manager Executable...
 
 :: Activate virtual environment
 if not exist ".venv" (
@@ -19,13 +19,13 @@ if %errorlevel% neq 0 (
 )
 
 :: Run PyInstaller to create the executable
-echo Packaging AllusModManager.exe...
-pyinstaller --onefile --noconsole --name AllusModManager --add-data "json;json" --add-data "nexus_api_key.txt;." src/main.py
+echo Packaging CP2077ModManager.exe...
+pyinstaller --onefile --noconsole --name CP2077ModManager --add-data "json;json" --add-data "nexus_api_key.txt;." src/main.py
 
 :: Move the built EXE to the project root (optional)
-if exist "dist\AllusModManager.exe" (
-    move "dist\AllusModManager.exe" "."
-    echo Build complete! Executable created: AllusModManager.exe
+if exist "dist\CP2077ModManager.exe" (
+    move "dist\CP2077ModManager.exe" "."
+    echo Build complete! Executable created: CP2077ModManager.exe
 ) else (
     echo Build failed! Check for errors above.
 )
