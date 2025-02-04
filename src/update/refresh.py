@@ -8,6 +8,7 @@ from src.utils import _load_tracked_mods_cache, _load_download_cache, _list_inst
 
 logger = logging.getLogger(__name__)
 
+
 def refresh_results(results_tree: ttk.Treeview, progress_label: Optional[tk.Label] = None):
     """Reload the cache and refresh the results tree."""
     if progress_label:
