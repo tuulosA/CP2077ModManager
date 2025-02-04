@@ -3,9 +3,8 @@ from typing import Dict
 
 from src.app import setup_file_buttons, setup_tracked_mods_tab, initialize_mod_data
 from src.ui import create_file_list, create_archive_tab, create_settings_panel
-from src.utils import _initialize_main_window, _create_tabs
+from src.utils import _initialize_main_window, _create_tabs, configure_logging
 from src.settings import load_settings, ensure_directories
-from src.utils import configure_logging
 
 def main(settings: Dict):
     """Initialize and run the main UI for Cyberpunk Mod Manager."""
