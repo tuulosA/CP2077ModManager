@@ -2,7 +2,7 @@ from src.utils import _group_mods_by_category, _configure_treeview_tags, _compar
 
 
 def populate_results_list(results_tree, mods, downloaded_files):
-    """Populate the Treeview with mod details, including their statuses."""
+    """Populate the Treeview with mod details, keeping categories sorted alphabetically and mods sorted within categories."""
     results_tree.delete(*results_tree.get_children())  # Clear the Treeview
 
     if not mods:
@@ -15,11 +15,20 @@ def populate_results_list(results_tree, mods, downloaded_files):
     # Group mods by category
     categories = _group_mods_by_category(mods)
 
-    for category, mods_in_category in categories.items():
-        # Add category separator
-        results_tree.insert("", "end", values=(f"────────────{category}────────────", ""), tags=("separator",))
+    # Sort categories alphabetically
+    sorted_categories = sorted(categories.keys(), key=lambda c: c.lower())
 
-        for mod in mods_in_category:
+    for category in sorted_categories:
+        mods_in_category = categories[category]
+
+        # Sort mods alphabetically within each category
+        sorted_mods = sorted(mods_in_category, key=lambda m: m.get("name", "").lower())
+
+        # Create a centered category separator
+        category_text = f"────────────{category.upper()}────────────"
+        results_tree.insert("", "end", values=(category_text.center(50), ""), tags=("separator",))
+
+        for mod in sorted_mods:
             mod_name = mod.get("name", "Unknown")
             mod_id = mod.get("mod_id", "Unknown ID")
 

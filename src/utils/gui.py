@@ -100,11 +100,13 @@ def _group_mods_by_category(mods):
     return categories
 
 def _configure_treeview_tags(results_tree):
-    """Configure Treeview tags for different statuses."""
+    """Configure Treeview tags for different statuses and make separators stand out more."""
     results_tree.tag_configure("update_available", background="yellow", font=("Arial", 9, "bold"))
     results_tree.tag_configure("up_to_date", background="lightgreen")
     results_tree.tag_configure("not_downloaded", background="lightgray")
-    results_tree.tag_configure("separator", background="lightgray", font=("Arial", 9, "bold"))
+
+    # Enhanced separator with bold, italic text and gray background
+    results_tree.tag_configure("separator", background="gray", foreground="lightgray", font=("Arial", 11, "bold italic"))
 
 def _compare_mod_status(mod_details, downloaded_files):
     mod_name = mod_details.get("name", "Unknown")
@@ -151,14 +153,16 @@ def _update_progress_bar(progress_bar, progress_label, percent_complete, downloa
     progress_label.update_idletasks()
 
 def _get_selected_mod(results_tree: ttk.Treeview) -> Optional[tuple]:
-    """Get the selected mod ID and name from the Treeview."""
+    """Get the selected mod ID and name from the Treeview, ignoring category separators."""
     selected = results_tree.selection()
     if not selected:
         messagebox.showinfo("Info", "Please select a mod to download.")
         return None
 
     selected_item = results_tree.item(selected[0], "values")[0]
-    if selected_item.startswith("────────────"):
+
+    # Ignore category separators
+    if selected_item.startswith("────────────") and selected_item.endswith("────────────"):
         logging.info("Ignoring category separator.")
         return None
 
