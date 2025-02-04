@@ -16,6 +16,10 @@ def run_app(settings: Dict):
     """Create the main UI with three tabs: Tracked Mods, Downloaded Files, and Installed Archives."""
     root = tk.Tk()
     root.title("Cyberpunk Mod Manager")
+    root.geometry("1000x800")  # Set a fixed initial window size
+    root.minsize(800, 500)     # Prevent the window from being too small
+    root.maxsize(1920, 1080)   # Set a reasonable max window size
+    root.resizable(True, True) # Allow resizing
 
     notebook = ttk.Notebook(root)  # Create tabbed interface
     mods_frame = ttk.Frame(notebook)
@@ -25,7 +29,7 @@ def run_app(settings: Dict):
     notebook.add(files_frame, text="Downloaded Files")  # Second tab for files
     notebook.pack(expand=True, fill="both")
 
-    # ✅ Fix: Let `create_file_list` handle Treeview creation
+    # Let `create_file_list` handle Treeview creation
     files_tree = create_file_list(files_frame)
 
     # Archive tab (Now receives archives_tree directly from create_archive_tab)
