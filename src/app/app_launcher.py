@@ -25,31 +25,20 @@ def run_app(settings: Dict):
     notebook.add(files_frame, text="Downloaded Files")  # Second tab for files
     notebook.pack(expand=True, fill="both")
 
-    # Downloaded Files Tab
-    files_tree = ttk.Treeview(files_frame, columns=("Mod Name", "File Name", "Size", "Uploaded by Author", "Status"),
-                              show="headings")
-    files_tree.pack(expand=True, fill="both", padx=10, pady=10)
-
-    for col in ("Mod Name", "File Name", "Size", "Uploaded by Author", "Status"):
-        files_tree.heading(col, text=col, command=lambda c=col: _sort_treeview(files_tree, c, False))
-        files_tree.column(col, width=200 if col != "Size" else 100, anchor="w")
-
-    # Load downloaded files
-    create_file_list(files_tree)
+    # ✅ Fix: Let `create_file_list` handle Treeview creation
+    files_tree = create_file_list(files_frame)
 
     # Archive tab (Now receives archives_tree directly from create_archive_tab)
     archives_frame, archives_tree = create_archive_tab(notebook)
 
     # Install Mods Button (inside Downloaded Files tab)
     install_button = ttk.Button(files_frame, text="Install Mods",
-                                command=lambda: handle_file_install(files_tree, settings,
-                                                                    archives_tree))  # Pass archives_tree
+                                command=lambda: handle_file_install(files_tree, settings, archives_tree))
     install_button.pack(pady=5)
 
     # Uninstall Mods Button (inside Downloaded Files tab)
     uninstall_button = ttk.Button(files_frame, text="Uninstall Mods",
-                                  command=lambda: handle_file_uninstall(files_tree, settings,
-                                                                        archives_tree))  # Pass archives_tree
+                                  command=lambda: handle_file_uninstall(files_tree, settings, archives_tree))
     uninstall_button.pack(pady=5)
 
     # Tracked Mods Tab
@@ -77,7 +66,7 @@ def run_app(settings: Dict):
                 root.after(0, update_popup.destroy)
 
         # Start the update in a background thread.
-        update_thread =     threading.Thread(target=run_updates, daemon=True)
+        update_thread = threading.Thread(target=run_updates, daemon=True)
         update_thread.start()
 
         if tracked_mods:
