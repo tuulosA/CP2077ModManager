@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from typing import Optional
 
-from src.ui import populate_results_list, create_file_list
+from src.ui import populate_results_list, populate_file_list
 from src.utils import _load_tracked_mods_cache, _load_download_cache, _list_installed_archives
 
 logger = logging.getLogger(__name__)
@@ -36,8 +36,9 @@ def refresh_results(results_tree: ttk.Treeview, progress_label: Optional[tk.Labe
             progress_label.config(text="Error refreshing results. Check logs for details.")
 
 def refresh_downloaded_files_ui(files_tree):
-    """Trigger UI refresh for Downloaded Files tab."""
-    create_file_list(files_tree)
+    """Clears and repopulates the existing Treeview instead of creating a new one."""
+    files_tree.delete(*files_tree.get_children())
+    populate_file_list(files_tree)
     files_tree.update_idletasks()
 
 def refresh_archives_ui(archives_tree: ttk.Treeview):

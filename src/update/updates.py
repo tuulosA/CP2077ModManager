@@ -1,4 +1,5 @@
 import logging
+import threading
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -6,6 +7,19 @@ from src.api import get_mod_files
 from src.utils import _save_download_cache
 
 logger = logging.getLogger(__name__)
+
+def start_update_thread(root, downloaded_files, update_popup):
+    """Runs update check in a background thread and closes popup after completion."""
+    def run_updates():
+        try:
+            logging.info("Checking for mod updates...")
+            check_for_updates(downloaded_files)
+        except Exception as e:
+            logging.error(f"Error during update check: {e}")
+        finally:
+            root.after(0, update_popup.destroy)
+
+    threading.Thread(target=run_updates, daemon=True).start()
 
 def check_for_updates(downloaded_files):
     """

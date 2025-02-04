@@ -23,7 +23,7 @@ def _extract_common(temp_extraction_dir, extract_to, file_path):
         for file in extracted_files:
             shutil.move(os.path.join(temp_extraction_dir, file), Config.ARCHIVE_FOLDER)
 
-        shutil.rmtree(temp_extraction_dir)  # ✅ Cleanup temp extraction
+        shutil.rmtree(temp_extraction_dir)
         logging.info(f"Extracted .archive files to {Config.ARCHIVE_FOLDER}")
         return
 

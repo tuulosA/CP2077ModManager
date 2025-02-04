@@ -191,3 +191,25 @@ def _sort_treeview(tree, col, reverse):
         tree.move(k, "", index)
 
     tree.heading(col, command=lambda: _sort_treeview(tree, col, not reverse))  # Toggle sort direction
+
+def _initialize_main_window():
+    """Creates the main Tkinter window."""
+    root = tk.Tk()
+    root.title("Cyberpunk Mod Manager")
+    root.geometry("1000x800")  # Fixed initial window size
+    root.minsize(800, 500)  # Prevent shrinking too much
+    root.maxsize(1920, 1080)  # Reasonable max size
+    root.resizable(True, True)  # Allow resizing
+    return root
+
+def _create_tabs(root):
+    """Creates tabbed interface and returns relevant frames."""
+    notebook = ttk.Notebook(root)
+    mods_frame = ttk.Frame(notebook)
+    files_frame = ttk.Frame(notebook)
+
+    notebook.add(mods_frame, text="Tracked Mods")
+    notebook.add(files_frame, text="Downloaded Files")
+    notebook.pack(expand=True, fill="both")
+
+    return notebook, mods_frame, files_frame

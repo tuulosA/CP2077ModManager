@@ -27,6 +27,8 @@ from .gui import (
     _update_progress_bar,
     _get_selected_mod,
     _sort_treeview,
+    _initialize_main_window,
+    _create_tabs,
 )
 from .install import (
     _extract_common,
@@ -37,3 +39,4 @@ from .install import (
     _list_files_recursive
 )
 from .uninstall import _remove_file_safely, _find_matching_mod
+from .logging import configure_logging
