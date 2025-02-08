@@ -42,6 +42,17 @@ def get_mod_details(game, mod_id):
         logging.warning(f"Failed to fetch details for mod ID {mod_id}: {e}")
         return None
 
+def get_file_details(game, mod_id, file_id):
+    """Retrieve detailed information about a specific file."""
+    url = f"{Config.BASE_URL}/games/{game}/mods/{mod_id}/files/{file_id}.json"
+    try:
+        response = requests.get(url, headers=Config.HEADERS)
+        response.raise_for_status()
+        return response.json()  # Returns detailed file information
+    except requests.RequestException as e:
+        logging.error(f"Failed to fetch details for file ID {file_id}: {e}")
+        return None
+
 def get_download_link(game, mod_id, file_id):
     """Generate a download link for a specific mod file."""
     url = f"{Config.BASE_URL}/games/{game}/mods/{mod_id}/files/{file_id}/download_link.json"
@@ -65,17 +76,6 @@ def get_download_link(game, mod_id, file_id):
 
 def get_category_name(category_id):
     return Config.CATEGORY_MAPPING.get(category_id, "Unknown Category")
-
-def get_file_details(game, mod_id, file_id):
-    """Retrieve detailed information about a specific file."""
-    url = f"{Config.BASE_URL}/games/{game}/mods/{mod_id}/files/{file_id}.json"
-    try:
-        response = requests.get(url, headers=Config.HEADERS)
-        response.raise_for_status()
-        return response.json()  # Returns detailed file information
-    except requests.RequestException as e:
-        logging.error(f"Failed to fetch details for file ID {file_id}: {e}")
-        return None
 
 def get_tracked_mods(game="cyberpunk2077"):
     """Fetch tracked mods and their details concurrently using ThreadPoolExecutor."""
