@@ -83,17 +83,6 @@ def _find_matching_installed_file(file_name, installed_files):
             return True
     return False
 
-def _move_item(tree, direction):
-    """Move selected archive file up or down in the list."""
-    selected_item = tree.selection()
-    if not selected_item:
-        return
-
-    index = tree.index(selected_item)
-    if (direction == "up" and index > 0) or (direction == "down" and index < len(tree.get_children()) - 1):
-        swap_index = index - 1 if direction == "up" else index + 1
-        tree.move(selected_item, "", swap_index)
-
 def _list_installed_archives():
     """
     Load the JSON file and return a sorted list of installed .archive files.

@@ -1,6 +1,6 @@
 from tkinter import ttk
 
-from src.utils import _list_installed_archives, _move_item, _rename_archive
+from src.utils import _list_installed_archives, _rename_archive
 
 
 def create_archive_tab(notebook):
@@ -20,17 +20,8 @@ def create_archive_tab(notebook):
     for archive in archives:
         archives_tree.insert("", "end", text=archive)
 
-    # Add control buttons.
     button_frame = ttk.Frame(frame)
     button_frame.pack(fill="x", pady=5)
-
-    btn_up = ttk.Button(button_frame, text="Move Up",
-                        command=lambda: _move_item(archives_tree, "up"))
-    btn_up.pack(side="left", padx=5)
-
-    btn_down = ttk.Button(button_frame, text="Move Down",
-                          command=lambda: _move_item(archives_tree, "down"))
-    btn_down.pack(side="left", padx=5)
 
     btn_rename = ttk.Button(button_frame, text="Rename File",
                             command=lambda: _rename_archive(archives_tree))

@@ -7,7 +7,6 @@ from .file_handling import (
     _setup_mod_directory,
     _clean_directory,
     _find_matching_installed_file,
-    _move_item,
     _list_installed_archives,
     _rename_archive,
     _parse_file_timestamp,
