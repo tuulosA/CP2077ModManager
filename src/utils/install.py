@@ -49,12 +49,6 @@ def _extract_common(temp_extraction_dir, extract_to, file_path):
     _process_extracted_structure(temp_extraction_dir, extract_to, file_path, folder_structure, mod_folders_present)
     _cleanup_temp_extraction(temp_extraction_dir)
 
-def _cleanup_temp_extraction(temp_extraction_dir):
-    """Ensures the temporary extraction directory is removed after processing."""
-    if os.path.exists(temp_extraction_dir):
-        shutil.rmtree(temp_extraction_dir)
-        logging.info(f"✅ Cleaned up temporary extraction directory: {temp_extraction_dir}")
-
 def _handle_only_archive_files(temp_extraction_dir, extracted_files, file_path):
     """Handles cases where only .archive files are extracted."""
     if all(f.endswith(".archive") for f in extracted_files):
@@ -66,10 +60,20 @@ def _handle_only_archive_files(temp_extraction_dir, extracted_files, file_path):
         for file in extracted_files:
             shutil.move(os.path.join(temp_extraction_dir, file), Config.ARCHIVE_FOLDER)
 
-        shutil.rmtree(temp_extraction_dir)
         logging.info(f"Extracted .archive files to {Config.ARCHIVE_FOLDER}")
+
+
+        ### THIS IS NOT REACHED FOR SOME REASON?
+        _cleanup_temp_extraction(temp_extraction_dir)
+        logging.info(f"✅ Successfully deleted temporary extraction directory: {temp_extraction_dir}")
         return True
     return False
+
+def _cleanup_temp_extraction(temp_extraction_dir):
+    """Ensures the temporary extraction directory is removed after processing."""
+    if os.path.exists(temp_extraction_dir):
+        shutil.rmtree(temp_extraction_dir)
+        logging.info(f"✅ Cleaned up temporary extraction directory: {temp_extraction_dir}")
 
 def _get_folder_structure_and_mod_presence(extracted_files):
     """Determines the folder structure and checks for mod folders."""
