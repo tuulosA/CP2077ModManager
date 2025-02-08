@@ -2,12 +2,33 @@ import os
 import shutil
 import zipfile
 import logging
+from tkinter import messagebox
+
 import patoolib  # For handling .rar
 
 from src.config import Config
 
 logger = logging.getLogger(__name__)
 
+
+def _extract_zip(file_path, extract_to):
+    """Extracts a ZIP archive, ensuring the topmost folder is valid and handling `.archive` files correctly."""
+    temp_extraction_dir = os.path.join(extract_to, "_temp_extracted")
+    os.makedirs(temp_extraction_dir, exist_ok=True)
+
+    with zipfile.ZipFile(file_path, "r") as zip_ref:
+        zip_ref.extractall(temp_extraction_dir)
+
+    _extract_common(temp_extraction_dir, extract_to, file_path)
+
+def _extract_rar(file_path, extract_to):
+    """Extracts a RAR archive while ensuring proper mod installation structure."""
+    temp_extraction_dir = os.path.join(extract_to, "_temp_extracted")
+    os.makedirs(temp_extraction_dir, exist_ok=True)
+
+    patoolib.extract_archive(file_path, outdir=temp_extraction_dir)
+
+    _extract_common(temp_extraction_dir, extract_to, file_path)
 
 def _extract_common(temp_extraction_dir, extract_to, file_path):
     """Handles the extraction logic for both ZIP and RAR archives. """
@@ -73,25 +94,6 @@ def _find_deepest_valid_folder(temp_extraction_dir):
 
     return temp_extraction_dir  # Return the best guess if nothing valid is found
 
-def _extract_zip(file_path, extract_to):
-    """Extracts a ZIP archive, ensuring the topmost folder is valid and handling `.archive` files correctly."""
-    temp_extraction_dir = os.path.join(extract_to, "_temp_extracted")
-    os.makedirs(temp_extraction_dir, exist_ok=True)
-
-    with zipfile.ZipFile(file_path, "r") as zip_ref:
-        zip_ref.extractall(temp_extraction_dir)
-
-    _extract_common(temp_extraction_dir, extract_to, file_path)
-
-def _extract_rar(file_path, extract_to):
-    """Extracts a RAR archive while ensuring proper mod installation structure."""
-    temp_extraction_dir = os.path.join(extract_to, "_temp_extracted")
-    os.makedirs(temp_extraction_dir, exist_ok=True)
-
-    patoolib.extract_archive(file_path, outdir=temp_extraction_dir)
-
-    _extract_common(temp_extraction_dir, extract_to, file_path)
-
 def _move_relevant_folders(src_dir, dest_dir):
     """Moves only the relevant mod folders (e.g., `archive`, `bin`) from a nested extraction to the correct location."""
     for folder in os.listdir(src_dir):
@@ -130,3 +132,11 @@ def _list_files_recursive(directory):
             if not full_path.endswith((".zip", ".rar")):  # Ignore archive files themselves
                 all_files.append(full_path)
     return all_files
+
+def _validate_installation_settings(settings):
+    """Validates game installation directory settings."""
+    game_install_dir = settings.get("game_installation_dir", "")
+    if not game_install_dir or not os.path.exists(game_install_dir):
+        messagebox.showerror("Error", "Game installation folder is not set or does not exist. Please configure it in settings.")
+        return None
+    return game_install_dir

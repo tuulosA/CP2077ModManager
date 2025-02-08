@@ -12,7 +12,7 @@ from .file_handling import (
     _rename_archive,
     _parse_file_timestamp,
 )
-from .api import _fetch_mod_details, _fetch_all_mod_files
+from .api import _fetch_mod_details, _fetch_all_mod_files, _get_file_details
 from .download import _download_file, _prepare_file_for_download
 from .gui import (
     _create_scrollable_frame,
@@ -36,7 +36,8 @@ from .install import (
     _extract_zip,
     _extract_rar,
     _move_relevant_folders,
-    _list_files_recursive
+    _list_files_recursive,
+    _validate_installation_settings
 )
 from .uninstall import _remove_file_safely, _find_matching_mod
 from .logging import configure_logging
