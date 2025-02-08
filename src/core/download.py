@@ -2,10 +2,8 @@ import logging
 import os
 
 from src.metadata import track_download_metadata
-from src.api import get_file_details, get_download_link
+from src.api import get_file_details, get_download_link, get_mod_files, get_mod_details
 from src.utils import (
-    _fetch_all_mod_files,
-    _fetch_mod_details,
     _clean_directory,
     _save_download_cache,
     _setup_mod_directory,
@@ -20,14 +18,14 @@ def download_selected_files(game, mod_id, selected_files, output_dir, progress_c
     """Download selected files for a mod."""
     logging.info(f"Downloading files for mod ID: {mod_id}, file ID: {selected_files}")
 
-    mod_details = _fetch_mod_details(game, mod_id)
+    mod_details = get_mod_details(game, mod_id)
     if not mod_details:
         logging.error(f"Mod details could not be retrieved for ID {mod_id}.")
         return False
 
     mod_name = mod_details.get("name", f"Mod_{mod_id}")
     mod_base_dir = _setup_mod_directory(mod_details, output_dir)
-    files = _fetch_all_mod_files(game, mod_id)
+    files = get_mod_files(game, mod_id)
 
     if not files:
         logging.error(f"No files found for mod ID {mod_id}.")

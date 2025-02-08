@@ -30,6 +30,18 @@ def get_mod_files(game, mod_id):
         logging.error(f"Failed to fetch mod files for mod ID {mod_id}: {e}")
         return []
 
+def get_mod_details(game, mod_id):
+    url = f"{Config.BASE_URL}/games/{game}/mods/{mod_id}.json"
+    try:
+        response = requests.get(url, headers=Config.HEADERS)
+        response.raise_for_status()
+        mod_details = response.json()
+        mod_details["category"] = get_category_name(mod_details.get("category_id"))
+        return mod_details
+    except requests.RequestException as e:
+        logging.warning(f"Failed to fetch details for mod ID {mod_id}: {e}")
+        return None
+
 def get_download_link(game, mod_id, file_id):
     """Generate a download link for a specific mod file."""
     url = f"{Config.BASE_URL}/games/{game}/mods/{mod_id}/files/{file_id}/download_link.json"
@@ -53,18 +65,6 @@ def get_download_link(game, mod_id, file_id):
 
 def get_category_name(category_id):
     return Config.CATEGORY_MAPPING.get(category_id, "Unknown Category")
-
-def get_mod_details(game, mod_id):
-    url = f"{Config.BASE_URL}/games/{game}/mods/{mod_id}.json"
-    try:
-        response = requests.get(url, headers=Config.HEADERS)
-        response.raise_for_status()
-        mod_details = response.json()
-        mod_details["category"] = get_category_name(mod_details.get("category_id"))
-        return mod_details
-    except requests.RequestException as e:
-        logging.warning(f"Failed to fetch details for mod ID {mod_id}: {e}")
-        return None
 
 def get_file_details(game, mod_id, file_id):
     """Retrieve detailed information about a specific file."""

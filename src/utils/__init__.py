@@ -11,7 +11,7 @@ from .file_handling import (
     _rename_archive,
     _parse_file_timestamp,
 )
-from .api import _fetch_mod_details, _fetch_all_mod_files, _get_file_details
+from .api import _get_file_details
 from .download import _download_file, _prepare_file_for_download
 from .gui import (
     _create_scrollable_frame,

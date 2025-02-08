@@ -5,7 +5,8 @@ import re
 from tkinter import messagebox
 
 from src.update import refresh_results, refresh_downloaded_files_ui
-from src.utils import _save_download_cache, _fetch_mod_details
+from src.utils import _save_download_cache
+from src.api import get_mod_details
 
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ def delete_selected_file(listbox, mod_name, mod_files, downloaded_files, popup, 
             messagebox.showerror("Error", f"Missing mod_id for file '{selected_file}'.")
             return
 
-        mod_details = _fetch_mod_details(game, mod_id)
+        mod_details = get_mod_details(game, mod_id)
         if not mod_details:
             messagebox.showerror("Error", f"Failed to fetch mod details for mod ID {mod_id}.")
             return

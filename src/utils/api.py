@@ -3,30 +3,17 @@ import re
 from pathlib import Path
 from typing import Optional, Tuple
 
-from src.api import get_mod_files, get_mod_details
+from src.api import get_mod_details
 
 logger = logging.getLogger(__name__)
 
-def _fetch_mod_details(game: str, mod_id: int) -> dict:
-    """Fetch mod details for given mod ID."""
-    mod_details = get_mod_details(game, mod_id)
-    if not mod_details:
-        logging.error(f"Failed to fetch mod details for mod ID {mod_id}. Cannot proceed with download.")
-    return mod_details
-
-def _fetch_all_mod_files(game: str, mod_id: int) -> list:
-    """Fetch all files for the mod to determine their latest timestamps."""
-    files = get_mod_files(game, mod_id)
-    if not files:
-        logging.error(f"No files available for mod ID {mod_id}. Cannot proceed with download.")
-    return files
 
 def _get_file_details(file_name: str, file_details: dict, settings: dict) -> Tuple[Optional[str], str, str]:
     """Fetches mod details and determines the correct mod path."""
     mod_id = file_details.get("mod_id")
     mod_name = file_details.get("mod_name", "Unknown")
 
-    mod_details = _fetch_mod_details("cyberpunk2077", mod_id) or {}
+    mod_details = get_mod_details("cyberpunk2077", mod_id) or {}
     mod_category = mod_details.get("category", "Uncategorized").strip()
 
     # 🔹 Remove timestamp suffix (_YYYYMMDD_HHMMSS.zip) from filename
