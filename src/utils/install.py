@@ -31,11 +31,24 @@ def _extract_rar(file_path, extract_to):
     _extract_common(temp_extraction_dir, extract_to, file_path)
 
 def _extract_common(temp_extraction_dir, extract_to, file_path):
-    """Handles the extraction logic for both ZIP and RAR archives. """
+    """Handles the extraction logic for both ZIP and RAR archives."""
     extracted_files = _list_files_recursive(temp_extraction_dir)
-    only_archive_files = all(f.endswith(".archive") for f in extracted_files)
 
-    if only_archive_files:
+    if _handle_only_archive_files(temp_extraction_dir, extracted_files, file_path):
+        return
+
+    temp_extraction_dir = _find_deepest_valid_folder(temp_extraction_dir)
+    folder_structure, mod_folders_present = _get_folder_structure_and_mod_presence(extracted_files)
+
+    if not folder_structure:
+        _log_and_cleanup(f"No valid root folders found in '{file_path}'. Skipping extraction.", temp_extraction_dir)
+        return
+
+    _process_extracted_structure(temp_extraction_dir, extract_to, file_path, folder_structure, mod_folders_present)
+
+def _handle_only_archive_files(temp_extraction_dir, extracted_files, file_path):
+    """Handles cases where only .archive files are extracted."""
+    if all(f.endswith(".archive") for f in extracted_files):
         logging.info(f"📂 Only .archive files detected in '{file_path}'. Extracting to {Config.ARCHIVE_FOLDER}...")
 
         if not os.path.exists(Config.ARCHIVE_FOLDER):
@@ -46,20 +59,20 @@ def _extract_common(temp_extraction_dir, extract_to, file_path):
 
         shutil.rmtree(temp_extraction_dir)
         logging.info(f"Extracted .archive files to {Config.ARCHIVE_FOLDER}")
-        return
+        return True
+    return False
 
-    temp_extraction_dir = _find_deepest_valid_folder(temp_extraction_dir)
+def _get_folder_structure_and_mod_presence(extracted_files):
+    """Determines the folder structure and checks for mod folders."""
     folder_structure = {os.path.normpath(f).split(os.sep)[0] for f in extracted_files if os.sep in f}
     mod_folders_present = Config.MOD_FOLDERS.intersection(folder_structure)
+    return folder_structure, mod_folders_present
 
-    if not folder_structure:
-        logging.warning(f"No valid root folders found in '{file_path}'. Skipping extraction.")
-        shutil.rmtree(temp_extraction_dir)
-        return
-
+def _process_extracted_structure(temp_extraction_dir, extract_to, file_path, folder_structure, mod_folders_present):
+    """Processes the extracted folder structure and moves files accordingly."""
     topmost_root_folder = sorted(folder_structure)[0]
-    if topmost_root_folder not in Config.MOD_FOLDERS:
 
+    if topmost_root_folder not in Config.MOD_FOLDERS:
         extracted_mod_dir = os.path.join(temp_extraction_dir, topmost_root_folder)
         if os.path.exists(extracted_mod_dir):
             _move_relevant_folders(extracted_mod_dir, extract_to)
@@ -67,14 +80,17 @@ def _extract_common(temp_extraction_dir, extract_to, file_path):
         else:
             logging.warning(f"Unexpected structure in {file_path}. Extracting normally.")
             shutil.move(temp_extraction_dir, extract_to)
-
     elif mod_folders_present:
         _move_relevant_folders(temp_extraction_dir, extract_to)
         shutil.rmtree(temp_extraction_dir)  # Cleanup temp extraction
-
     else:
         logging.warning(f"Unrecognized folder structure in '{file_path}'. Extracting normally.")
         shutil.move(temp_extraction_dir, extract_to)
+
+def _log_and_cleanup(message, temp_extraction_dir):
+    """Logs a warning message and removes the temporary extraction directory."""
+    logging.warning(message)
+    shutil.rmtree(temp_extraction_dir)
 
 def _find_deepest_valid_folder(temp_extraction_dir):
     """Finds the deepest folder containing mod files inside the extracted directory."""
